@@ -1,0 +1,49 @@
+name: 03 - Jobs Demo
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # Job 1: Chạy đầu tiên
+  job-a:
+    name: 🅰️ Job A
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Job A starting..."
+          sleep 5
+          echo "Job A done!"
+
+  # Job 2: Chạy song song với Job A
+  job-b:
+    name: 🅱️ Job B
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Job B starting..."
+          sleep 3
+          echo "Job B done!"
+
+  # Job 3: Chờ cả A và B hoàn thành
+  job-c:
+    name: 🅲 Job C (depends on A & B)
+    needs: [job-a, job-b]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job C - After A and B!"
+
+  # Job 4: Chỉ chạy nếu Job C thành công
+  job-d:
+    name: 🅳 Job D (depends on C)
+    needs: job-c
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job D - Final job!"
+
+  # Job 5: Chạy trên Windows
+  job-windows:
+    name: 🪟 Windows Job
+    runs-on: windows-latest
+    steps:
+      - run: Write-Output "Hello from Windows!"
+        shell: pwsh
