@@ -20,8 +20,13 @@ jobs:
           echo "App Name: $APP_NAME"
           echo "Python: $PYTHON_VERSION"
 
+<<<<<<< HEAD
       # - name: Show Job Env
       #   run: echo "Job Env: $JOB_ENV"
+=======
+      - name: Show Job Env
+        run: echo "Job Env: $JOB_ENV"
+>>>>>>> 2126b2d48b3de9ceabb53409c7b0de17c2c1a71f
 
       - name: Step-level Env
         env:
