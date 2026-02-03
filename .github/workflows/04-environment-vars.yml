@@ -19,19 +19,15 @@ jobs:
         run: |
           echo "App Name: $APP_NAME"
           echo "Python: $PYTHON_VERSION"
-
-<<<<<<< HEAD
-      # - name: Show Job Env
-      #   run: echo "Job Env: $JOB_ENV"
-=======
       - name: Show Job Env
-        run: echo "Job Env: $JOB_ENV"
->>>>>>> 2126b2d48b3de9ceabb53409c7b0de17c2c1a71f
-
+        run: | 
+           echo "Job Env: $JOB_ENV"
+      
       - name: Step-level Env
         env:
           STEP_VAR: step-specific
-        run: echo "Step Var: $STEP_VAR"
+        run: | 
+          echo "Step Var: $STEP_VAR"
 
       - name: GitHub Context Variables
         run: |
