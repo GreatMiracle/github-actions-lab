@@ -1,0 +1,33 @@
+name: 03b - Conditionals Demo
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_deploy:
+        description: 'Run deploy job?'
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Building..."
+
+  # Chỉ chạy nếu input = true
+  deploy:
+    needs: build
+    if: ${{ inputs.run_deploy == true }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Deploying..."
+
+  # Luôn chạy, kể cả khi job trước fail
+  notify:
+    needs: [build, deploy]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Build status: ${{ needs.build.result }}"
+          echo "Deploy status: ${{ needs.deploy.result }}"
