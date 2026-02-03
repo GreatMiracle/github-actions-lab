@@ -15,7 +15,7 @@ jobs:
       JOB_ENV: job-specific-value
 
     steps:
-      - name: Show Workflow Env
+      - name: Show Workflow Envdef
         run: |
           echo "App Name: $APP_NAME"
           echo "Python: $PYTHON_VERSION"
