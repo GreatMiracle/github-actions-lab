@@ -1,0 +1,64 @@
+name: 02 - Triggers Demo
+
+on:
+  # 1. Push trigger
+  push:
+    branches: 
+      - main
+      - 'feature/**'
+    paths:
+      - 'src/**'
+      - '!src/**/*.md'
+
+# 2. Pull Request trigger
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+# 3. Schedule trigger (mỗi ngày lúc 2h sáng UTC)
+  schedule:
+    - cron: '0 2 * * *'
+
+ # 4. Manual trigger với inputs
+  workflow_dispatch:
+    inputs:
+      greeting:
+        description: 'Your greeting message'
+        required: true
+        default: 'Hello'
+        type: string
+      environment:
+        description: 'Environment to run'
+        required: true
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+
+jobs:
+  show-triggers:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📋 Show Trigger Info
+        run: |
+          echo "Trigger Type: ${{ github.event_name }}"
+          echo "Event: ${{ github.event }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "SHA: ${{ github.sha }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit Message: ${{ github.event.head_commit.message }}"
+          echo "PR Number: ${{ github.event.pull_request.number }}"
+          echo "PR Title: ${{ github.event.pull_request.title }}"
+          echo "PR Author: ${{ github.event.pull_request.user.login }}"
+          echo "Schedule Time: ${{ github.triggering_actor }}"
+
+      - name: 👋 Show Manual Inputs
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "Greeting: ${{ github.event.inputs.greeting }}"
+          echo "Environment: ${{ github.event.inputs.environment }}"
+
