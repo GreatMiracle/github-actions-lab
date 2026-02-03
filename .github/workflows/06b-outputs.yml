@@ -1,0 +1,31 @@
+name: 06b - Job Outputs
+
+on:
+    workflow_dispatch:
+
+jobs:
+    generate:
+        runs-on: ubuntu-latest
+        outputs:
+            version: ${{ steps.get-version.outputs.version }}
+            timestamp: ${{ steps.get-time.outputs.time }}
+
+        steps:
+            - name: 📌 Set Version
+              id: get-version
+              run: |
+                  echo "version=1.2.3" >> $GITHUB_OUTPUT
+
+            - name: 🕐 Set Timestamp
+              id: get-time
+              run: |
+                  echo "time=$(date +%Y%m%d-%H%M%S)" >> $GITHUB_OUTPUT
+
+    consume:
+        needs: generate
+        runs-on: ubuntu-latest
+        steps:
+            - name: 📋 Use Outputs
+              run: |
+                  echo "Version: ${{ needs.generate.outputs.version }}"
+                  echo "Timestamp: ${{ needs.generate.outputs.timestamp }}"

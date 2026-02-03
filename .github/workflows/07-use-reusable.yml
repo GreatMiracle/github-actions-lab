@@ -1,0 +1,17 @@
+name: 07 - Use Reusable Workflow
+
+on:
+    workflow_dispatch:
+
+jobs:
+    test-python-311:
+        uses: ./.github/workflows/reusable-python-test.yml
+        with:
+            python-version: "3.11"
+        secrets: inherit
+
+    test-python-312:
+        uses: ./.github/workflows/reusable-python-test.yml
+        with:
+            python-version: "3.12"
+        secrets: inherit

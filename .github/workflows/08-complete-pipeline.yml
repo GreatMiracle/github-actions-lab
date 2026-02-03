@@ -1,0 +1,108 @@
+name: 08 - Complete CI/CD Pipeline
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+    workflow_dispatch:
+
+env:
+    PYTHON_VERSION: "3.11"
+
+jobs:
+    # ═══════════════════════════════════════
+    # STAGE 1: Code Quality
+    # ═══════════════════════════════════════
+    lint:
+        name: 🔍 Lint
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ env.PYTHON_VERSION }}
+                  cache: "pip"
+
+            - name: Install linters
+              run: pip install ruff black
+
+            - name: Run Ruff
+              run: ruff check . || true
+
+            - name: Check Black formatting
+              run: black --check . || true
+
+    # ═══════════════════════════════════════
+    # STAGE 2: Tests
+    # ═══════════════════════════════════════
+    test:
+        name: 🧪 Test
+        needs: lint
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ env.PYTHON_VERSION }}
+                  cache: "pip"
+
+            - name: Install dependencies
+              run: |
+                  pip install pytest pytest-cov
+                  pip install -r requirements.txt || true
+
+            - name: Run tests
+              run: pytest --cov --cov-report=xml || echo "No tests"
+
+            - name: Upload coverage
+              uses: actions/upload-artifact@v4
+              with:
+                  name: coverage-report
+                  path: coverage.xml
+              if: always()
+
+    # ═══════════════════════════════════════
+    # STAGE 3: Build
+    # ═══════════════════════════════════════
+    build:
+        name: 🏗️ Build
+        needs: test
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/main'
+
+        outputs:
+            image-tag: ${{ steps.meta.outputs.tags }}
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Set image tag
+              id: meta
+              run: |
+                  echo "tags=myapp:${{ github.sha }}" >> $GITHUB_OUTPUT
+
+            - name: Build info
+              run: |
+                  echo "Would build: ${{ steps.meta.outputs.tags }}"
+                  echo "Build complete!"
+
+    # ═══════════════════════════════════════
+    # STAGE 4: Deploy
+    # ═══════════════════════════════════════
+    deploy:
+        name: 🚀 Deploy
+        needs: build
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/main'
+        environment:
+            name: production
+            url: https://example.com
+
+        steps:
+            - name: Deploy
+              run: |
+                  echo "Deploying ${{ needs.build.outputs.image-tag }}"
+                  echo "Deploy successful! 🎉"
