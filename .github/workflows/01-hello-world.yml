@@ -1,0 +1,30 @@
+# File: .github/workflows/01-hello-world.yml
+
+name: 01 - Hello World
+
+# Trigger: Chạy khi push hoặc manual
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:  # Cho phép chạy manual
+
+jobs:
+  hello:
+    name: Say Hello
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 👋 Hello World
+        run: echo "Hello, GitHub Actions!"
+      
+      - name: 📅 Print Date
+        run: date
+      
+      - name: 💻 Print System Info
+        run: |
+          echo "OS: $(uname -a)"
+          echo "User: $(whoami)"
+          echo "Directory: $(pwd)"
+      
+      - name: 🐍 Check Python Version
+        run: python3 --version
